@@ -10,9 +10,17 @@ import org.springframework.integration.ip.udp.UnicastReceivingChannelAdapter;
 public class UdpConfig {
 
     @Bean
+    public IntegrationFlow processUniCastUdpMessageHttps() {
+        return IntegrationFlows
+                .from(new UnicastReceivingChannelAdapter(443))
+                .handle("udpService", "handleMessage")
+                .get();
+    }
+
+    @Bean
     public IntegrationFlow processUniCastUdpMessage() {
         return IntegrationFlows
-                .from(new UnicastReceivingChannelAdapter(8080))
+                .from(new UnicastReceivingChannelAdapter(80))
                 .handle("udpService", "handleMessage")
                 .get();
     }
