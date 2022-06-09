@@ -2,9 +2,10 @@ package ru.anpopov.privatevpn.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
@@ -23,5 +24,16 @@ public class UdpConfig {
                 .from(new UnicastReceivingChannelAdapter(port))
                 .handle("udpService", "handleMessage")
                 .get();
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void ready() {
+        try {
+            while (true) {
+
+            }
+        } catch (Exception e) {
+            log.info("Possibly stopping. Good bye, world!");
+        }
     }
 }
