@@ -3,34 +3,49 @@ package ru.anpopov.privatevpn.config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.ip.udp.UnicastReceivingChannelAdapter;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
 public class UdpConfig {
 
-    @Bean
-    public IntegrationFlow processUniCastUdpMessageHttps(Environment environment) {
-        int port = Integer.parseInt(environment.getProperty("server.port"));
-        log.info("UDP is on {}", port);
-        return IntegrationFlows
-                .from(new UnicastReceivingChannelAdapter(port))
-                .handle("udpService", "handleMessage")
-                .get();
-    }
+//    @Bean
+//    public IntegrationFlow processUniCastUdpMessageHttps(Environment environment) {
+//        int port = Integer.parseInt(environment.getProperty("server.port"));
+//        log.info("UDP is on {}", port);
+//        return IntegrationFlows
+//                .from(new UnicastReceivingChannelAdapter(port))
+//                .handle("udpService", "handleMessage")
+//                .get();
+//    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void ready() {
         try {
+            int count = 0;
             while (true) {
-
+                System.out.println("doing things..." + count++);
+                try (ServerSocket serverSocket = new ServerSocket(8080);
+                     Socket accept = serverSocket.accept()
+                ) {
+                    try (InputStream inputStream = accept.getInputStream();
+                         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                         OutputStream outputStream = accept.getOutputStream();
+                         BufferedReader br = new BufferedReader(inputStreamReader)) {
+                        br.lines().forEach(System.out::println);
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
             }
         } catch (Exception e) {
             log.info("Possibly stopping. Good bye, world!");
