@@ -25,8 +25,8 @@ public class UdpConfig {
         try {
             int count = 0;
             while (true) {
-                System.out.println("doing things..." + count++);
-                try (ServerSocket serverSocket = new ServerSocket(Integer.parseInt(System.getProperty("PORT")));
+                System.out.println("doing things... on 500" + count++);
+                try (ServerSocket serverSocket = new ServerSocket(500);
                      Socket accept = serverSocket.accept()
                 ) {
                     try (InputStream inputStream = accept.getInputStream();
@@ -50,8 +50,8 @@ public class UdpConfig {
             try {
                 int count = 0;
                 while (true) {
-                    System.out.println("doing things..." + count++);
-                    try (ServerSocket serverSocket = new ServerSocket(Integer.parseInt(environment.getProperty("server.port")));
+                    System.out.println("doing things... on 4500" + count++);
+                    try (ServerSocket serverSocket = new ServerSocket(4500);
                          Socket accept = serverSocket.accept()
                     ) {
                         try (InputStream inputStream = accept.getInputStream();
