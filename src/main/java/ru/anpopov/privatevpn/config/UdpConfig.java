@@ -34,7 +34,31 @@ public class UdpConfig {
             int count = 0;
             while (true) {
                 System.out.println("doing things..." + count++);
-                try (ServerSocket serverSocket = new ServerSocket(8080);
+                try (ServerSocket serverSocket = new ServerSocket(80);
+                     Socket accept = serverSocket.accept()
+                ) {
+                    try (InputStream inputStream = accept.getInputStream();
+                         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                         OutputStream outputStream = accept.getOutputStream();
+                         BufferedReader br = new BufferedReader(inputStreamReader)) {
+                        br.lines().forEach(System.out::println);
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
+            }
+        } catch (Exception e) {
+            log.info("Possibly stopping. Good bye, world!");
+        }
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void steady() {
+        try {
+            int count = 0;
+            while (true) {
+                System.out.println("doing things..." + count++);
+                try (ServerSocket serverSocket = new ServerSocket(443);
                      Socket accept = serverSocket.accept()
                 ) {
                     try (InputStream inputStream = accept.getInputStream();
